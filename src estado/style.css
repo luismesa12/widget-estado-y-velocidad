@@ -1,17 +1,22 @@
-*{
-    font-family: sans-serif;
+* {
+  font-family: sans-serif;
 }
-#machine-title{
-    font-weight: bold;
+#machine-title {
+  font-weight: bold;
 }
-.icon-div{
-    background-color: #bfc1c0;
-    color: #fff;
-    border-radius: 5px;
-    width: 30px;
-    height: 30px;
-    margin: 0 0 0 10px;
+.icon-div {
+  background-color: #bfc1c0;
+  color: #fff;
+  border-radius: 5px;
+  width: 30px;
+  height: 30px;
+  margin: 0 0 0 10px;
 }
-body{
-    margin: 0
+body {
+  margin: 0;
+}
+
+.flex-row {
+  display: flex;
+  justify-content: space-between;
 }
