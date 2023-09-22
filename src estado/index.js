@@ -287,9 +287,10 @@ const determineMachineState = (onOffVarId, tk) => {
   );
 };
 const functionSubscribedVar_Speed = (dot) => {
-  const { value=0 } = dot;
-  
-  console.log('speed:',dot);
+  const { value } = dot;
+  const speed = Number(value) ? Math.round(value) : 0;
+
+  console.log('speed:',speed);
 }
 const determineCurrSpeed = async (speedVarId, tk) => {
   const res = await fetchLastDotByVarId(speedVarId, tk);
