@@ -4,14 +4,13 @@
 #machine-title{
     font-weight: bold;
 }
-.icon-power{
-	font-size: 35px;
-    color: #fff;
-}
 .icon-div{
     background-color: #bfc1c0;
-    margin: 0 10px 0 10px;
-    border-radius: 60px;
+    color: #fff;
+    border-radius: 5px;
+    width: 30px;
+    height: 30px;
+    margin: 0 0 0 10px;
 }
 body{
     margin: 0

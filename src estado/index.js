@@ -74,8 +74,7 @@ const runSockets = () => {
 
 /* Services */
 const getDataVarsIdByDeviceId = async (deviceId, varLabels = [], TK) => {
-  let url =
-    "https://industrial.ubidots.com/api/v2.0/variables/?fields=id,label,unit";
+  let url = "https://industrial.ubidots.com/api/v2.0/variables/?fields=id,label,unit";
   url += "&label__in=" + varLabels.join();
   url += "&device__id__in=" + deviceId;
   const res = await fetch(url, {
@@ -137,12 +136,12 @@ const query = async (varId, to_k) => {
 
 const getDateString = (d) => {
   const datestring =
-    ("0" + d.getDate()).slice(-2) +
-    "/" +
-    ("0" + (d.getMonth() + 1)).slice(-2) +
-    "/" +
-    d.getFullYear() +
-    " " +
+    // ("0" + d.getDate()).slice(-2) +
+    // "/" +
+    // ("0" + (d.getMonth() + 1)).slice(-2) +
+    // "/" +
+    // d.getFullYear() +
+    // " " +
     ("0" + d.getHours()).slice(-2) +
     ":" +
     ("0" + d.getMinutes()).slice(-2);
@@ -160,7 +159,7 @@ const changeButtonState = (text, color) => {
 };
 //validate time difference
 const validateTimeDifference = (timestamp) => {
-  const currentTime =  Date.now();
+  const currentTime = Date.now();
   const dif = currentTime - timestamp;
   if (dif >= SECOND_WARNING) return changeButtonState("OFF >20", "#cb3234");
   if (dif >= FIRST_WARNING) return changeButtonState("OFF 10-20", "#e98a14");
@@ -173,12 +172,10 @@ const getTimeUntilEndOfShift = (shift) => {
   const nowInMinutes = new Date().getHours() * 60 + new Date().getMinutes();
   if (endInMinutes < nowInMinutes) {
     const A_DAY_IN_MINUTES = 24 * 60;
-    const timeUntilEndOfShiftInMilliseconds =
-      (A_DAY_IN_MINUTES - nowInMinutes + endInMinutes) * 60 * 1000;
+    const timeUntilEndOfShiftInMilliseconds = (A_DAY_IN_MINUTES - nowInMinutes + endInMinutes) * 60 * 1000;
     return timeUntilEndOfShiftInMilliseconds;
   }
-  const timeUntilEndOfShiftInMilliseconds =
-    (endInMinutes - nowInMinutes) * 60 * 1000;
+  const timeUntilEndOfShiftInMilliseconds = (endInMinutes - nowInMinutes) * 60 * 1000;
   return timeUntilEndOfShiftInMilliseconds;
 };
 const getCurrentTotalMinutesSinceMidnight = () => {
@@ -195,45 +192,27 @@ const getIsShift = (shift, currentTotalMinutesSinceMidnight) => {
   const shiftStart = shift.start_h * 60 + shift.start_m;
   const shiftEnd = shift.end_h * 60 + shift.end_m;
   if (shiftEnd > shiftStart) {
-    const isShift =
-      currentTotalMinutesSinceMidnight >= shiftStart &&
-      currentTotalMinutesSinceMidnight < shiftEnd;
+    const isShift = currentTotalMinutesSinceMidnight >= shiftStart && currentTotalMinutesSinceMidnight < shiftEnd;
     return isShift;
   }
   const isShift =
-    (currentTotalMinutesSinceMidnight >= shiftStart &&
-      currentTotalMinutesSinceMidnight < A_DAY_IN_MINUTES) ||
-    (currentTotalMinutesSinceMidnight >= 0 &&
-      currentTotalMinutesSinceMidnight < shiftEnd);
+    (currentTotalMinutesSinceMidnight >= shiftStart && currentTotalMinutesSinceMidnight < A_DAY_IN_MINUTES) ||
+    (currentTotalMinutesSinceMidnight >= 0 && currentTotalMinutesSinceMidnight < shiftEnd);
   return isShift;
 };
 
-const getNumberOfCurrentShift = (
-  day_shifts,
-  currentTotalMinutesSinceMidnight
-) => {
+const getNumberOfCurrentShift = (day_shifts, currentTotalMinutesSinceMidnight) => {
   const numberOfCurrentShift = Object.keys(day_shifts).find((ShiftNumber) => {
-    return getIsShift(
-      day_shifts[ShiftNumber],
-      currentTotalMinutesSinceMidnight
-    );
+    return getIsShift(day_shifts[ShiftNumber], currentTotalMinutesSinceMidnight);
   });
   return numberOfCurrentShift;
 };
 
-const getCurrentShiftObject = (
-  currentTotalMinutesSinceMidnight,
-  day_shifts = {}
-) => {
-  const numberOfCurrentShift = getNumberOfCurrentShift(
-    day_shifts,
-    currentTotalMinutesSinceMidnight
-  );
+const getCurrentShiftObject = (currentTotalMinutesSinceMidnight, day_shifts = {}) => {
+  const numberOfCurrentShift = getNumberOfCurrentShift(day_shifts, currentTotalMinutesSinceMidnight);
   if (!numberOfCurrentShift) return { mtto: false, endInMinutes: null };
   const mtto = !!day_shifts[numberOfCurrentShift].mtto;
-  const endInMinutes =
-    day_shifts[numberOfCurrentShift].end_h * 60 +
-    day_shifts[numberOfCurrentShift].end_m;
+  const endInMinutes = day_shifts[numberOfCurrentShift].end_h * 60 + day_shifts[numberOfCurrentShift].end_m;
   return { mtto, endInMinutes };
 };
 const getCurrentShiftFromMongo = async (customer_id, machine_label) => {
@@ -253,10 +232,7 @@ const getCurrentShiftFromMongo = async (customer_id, machine_label) => {
   const shift = res[0];
   if (!shift || !shift.day_shifts) return defaultShift;
   const dayShifts = shift.day_shifts;
-  return getCurrentShiftObject(
-    getCurrentTotalMinutesSinceMidnight(),
-    dayShifts
-  );
+  return getCurrentShiftObject(getCurrentTotalMinutesSinceMidnight(), dayShifts);
 };
 const getIsPlannedMtto = async () => {
   if (shift.endInMinutes) return shift.mtto;
@@ -276,24 +252,20 @@ const getIsPlannedMtto = async () => {
 const clearIntervalOfValidateTimeDifference = () => {
   if (intervalId) clearInterval(intervalId);
   intervalId = null;
-}
+};
 const functionSubscribedVar = async (res) => {
   clearIntervalOfValidateTimeDifference();
-  const botinRes =
-    HAS_BOTIN &&
-    (await fetchLastDotByVarId(varIdsObj[BOTIN_VAR_LABEL], ubidots.token));
+  const botinRes = HAS_BOTIN && (await fetchLastDotByVarId(varIdsObj[BOTIN_VAR_LABEL], ubidots.token));
   const botin = botinRes && botinRes?.results[0]?.value;
   const value = res.results[0].value;
   const timestamp = res.results[0].timestamp;
   const is_mtto = res.results[0].context?.mtto;
   changeDateString(timestamp);
   const is_adjust = res.results[0].context?.adjust;
-  if (is_adjust) return changeButtonState('En Ajustes', "#9BA2FF");
+  if (is_adjust) return changeButtonState("En Ajustes", "#9BA2FF");
   if (is_mtto) return changeButtonState("En Mtto", "#05516C");
-  if (value && HAS_BOTIN && !botin)
-    return changeButtonState("Sin tela", "#dcdc00");
-  if (value && HAS_BOTIN && botin === 1)
-    return changeButtonState("OFF", "#bfc1c0");
+  if (value && HAS_BOTIN && !botin) return changeButtonState("Sin tela", "#dcdc00");
+  if (value && HAS_BOTIN && botin === 1) return changeButtonState("OFF", "#bfc1c0");
   if (value || botin === 2) return changeButtonState("On", "#008f38");
   const isPlannedMtto = await getIsPlannedMtto();
   if (isPlannedMtto) return changeButtonState("En Mtto", "#05516C");
@@ -315,35 +287,28 @@ const determineMachineState = (onOffVarId, tk) => {
 /* Functions end*/
 
 /* Listen */
-let currentDeviceId = null;//fix ubidots event bug 
+let currentDeviceId = null; //fix ubidots event bug
 ubidots.on("selectedDeviceObject", async function (selectedDeviceObject) {
   if (IS_STATIC || !ubidots.token) return;
-  if (currentDeviceId === selectedDeviceObject.id) return;//fix ubidots event bug
-  currentDeviceId = selectedDeviceObject.id;//fix ubidots event bug
+  if (currentDeviceId === selectedDeviceObject.id) return; //fix ubidots event bug
+  currentDeviceId = selectedDeviceObject.id; //fix ubidots event bug
   $("#status").empty();
   $("#value").empty();
   clearIntervalOfValidateTimeDifference();
   $(".icon-div").css("background-color", "#bfc1c0");
   shift = { endInMinutes: null, mtto: false };
   unSubscribeVariable(varIdsObj[ON_OFF_VAR_LABEL]);
-  
-  varIdsObj = await getDataVarsIdByDeviceId(
-    selectedDeviceObject.id,
-    [ON_OFF_VAR_LABEL, BOTIN_VAR_LABEL],
-    ubidots.token
-  );
+
+  varIdsObj = await getDataVarsIdByDeviceId(selectedDeviceObject.id, [ON_OFF_VAR_LABEL, BOTIN_VAR_LABEL], ubidots.token);
   changeMachineTitle(selectedDeviceObject.name || "");
   determineMachineState(varIdsObj[ON_OFF_VAR_LABEL], ubidots.token);
 });
 
 ubidots.on("ready", async () => {
+  console.log({ubidots});
   changeMachineTitle(IS_STATIC ? MACHINE_NAME : ubidots.deviceObject?.name);
   const selectedDeviceId = IS_STATIC ? DEVICE_ID : ubidots.selectedDevice;
-  varIdsObj = await getDataVarsIdByDeviceId(
-    selectedDeviceId,
-    [ON_OFF_VAR_LABEL, BOTIN_VAR_LABEL],
-    ubidots.token
-  );
+  varIdsObj = await getDataVarsIdByDeviceId(selectedDeviceId, [ON_OFF_VAR_LABEL, BOTIN_VAR_LABEL], ubidots.token);
   runSockets();
   determineMachineState(varIdsObj[ON_OFF_VAR_LABEL], ubidots.token);
 });
