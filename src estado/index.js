@@ -1,5 +1,5 @@
 //if static dashboard
-const IS_STATIC = false;
+const IS_STATIC = true;
 const MACHINE_NAME = "Maquina 1 D";
 const DEVICE_ID = "600725cf0ff4c3259dcd5c39";
 const DEVICE_LABEL = "3f002b001947393035313138";
