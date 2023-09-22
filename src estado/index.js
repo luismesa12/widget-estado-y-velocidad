@@ -4,15 +4,11 @@ const MACHINE_NAME = "Maquina 1 D";
 const DEVICE_ID = "600725cf0ff4c3259dcd5c39";
 const DEVICE_LABEL = "3f002b001947393035313138";
 
-// Activate this to use the botin logic ("Sin tela")
-const HAS_BOTIN = false;
 
 // Normally it is not necessary to change this
 const ON_OFF_VAR_LABEL = "on_off";
-const BOTIN_VAR_LABEL = "botin";
 const FIRST_WARNING = 600000; // Status changes to orange after x milliseconds
 const SECOND_WARNING = 1200000; // Status changes to red after x milliseconds
-const ADJUST_TEXT = "En Ajustes";
 
 /* Vars */
 const ubidots = new Ubidots();
@@ -22,6 +18,11 @@ let shift = {
   mtto: false,
 };
 let intervalId;
+//ignore
+const HAS_BOTIN = false;
+const BOTIN_VAR_LABEL = "botin";
+const ADJUST_TEXT = "En Ajustes";
+
 /* SOCKET */
 const srv = window.location.hostname + ":443";
 let socket;
