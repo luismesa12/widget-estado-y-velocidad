@@ -287,9 +287,13 @@ const determineMachineState = (onOffVarId, tk) => {
   );
 };
 const functionSubscribedVar_Speed = (dot) => {
+  const { value=0 } = dot;
+  
   console.log('speed:',dot);
 }
-const determineCurrSpeed = (speedVarId) => {
+const determineCurrSpeed = async (speedVarId, tk) => {
+  const res = await fetchLastDotByVarId(speedVarId, tk);
+  functionSubscribedVar_Speed(res?.results?.[0] || {});
   subscribeVariable(speedVarId, (dot) =>
     functionSubscribedVar_Speed(JSON.parse(dot))
   );
@@ -313,7 +317,7 @@ ubidots.on("selectedDeviceObject", async function (selectedDeviceObject) {
   varIdsObj = await getDataVarsIdByDeviceId(selectedDeviceObject.id, [ON_OFF_VAR_LABEL, BOTIN_VAR_LABEL, SPEED_VAR_LABEL], ubidots.token);
   changeMachineTitle(selectedDeviceObject.name || "");
   determineMachineState(varIdsObj[ON_OFF_VAR_LABEL], ubidots.token);
-  determineCurrSpeed(varIdsObj[SPEED_VAR_LABEL]);
+  determineCurrSpeed(varIdsObj[SPEED_VAR_LABEL], ubidots.token);
 });
 
 ubidots.on("ready", async () => {
@@ -323,6 +327,6 @@ ubidots.on("ready", async () => {
   varIdsObj = await getDataVarsIdByDeviceId(selectedDeviceId, [ON_OFF_VAR_LABEL, BOTIN_VAR_LABEL, SPEED_VAR_LABEL], ubidots.token);
   runSockets();
   determineMachineState(varIdsObj[ON_OFF_VAR_LABEL], ubidots.token);
-  determineCurrSpeed(varIdsObj[SPEED_VAR_LABEL]);
+  determineCurrSpeed(varIdsObj[SPEED_VAR_LABEL], ubidots.token);
 });
 /*  */
