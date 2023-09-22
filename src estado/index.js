@@ -7,6 +7,7 @@ const DEVICE_LABEL = "3f002b001947393035313138";
 
 // Normally it is not necessary to change this
 const ON_OFF_VAR_LABEL = "on_off";
+const SPEED_VAR_LABEL = "rate";
 const FIRST_WARNING = 600000; // Status changes to orange after x milliseconds
 const SECOND_WARNING = 1200000; // Status changes to red after x milliseconds
 
@@ -285,6 +286,14 @@ const determineMachineState = (onOffVarId, tk) => {
     })
   );
 };
+const functionSubscribedVar_Speed = (dot) => {
+  console.log('speed:',dot);
+}
+const determineCurrSpeed = (speedVarId) => {
+  subscribeVariable(speedVarId, (dot) =>
+    functionSubscribedVar_Speed(JSON.parse(dot))
+  );
+};
 /* Functions end*/
 
 /* Listen */
@@ -299,18 +308,21 @@ ubidots.on("selectedDeviceObject", async function (selectedDeviceObject) {
   $(".icon-div").css("background-color", "#bfc1c0");
   shift = { endInMinutes: null, mtto: false };
   unSubscribeVariable(varIdsObj[ON_OFF_VAR_LABEL]);
+  unSubscribeVariable(varIdsObj[SPEED_VAR_LABEL]);
 
-  varIdsObj = await getDataVarsIdByDeviceId(selectedDeviceObject.id, [ON_OFF_VAR_LABEL, BOTIN_VAR_LABEL], ubidots.token);
+  varIdsObj = await getDataVarsIdByDeviceId(selectedDeviceObject.id, [ON_OFF_VAR_LABEL, BOTIN_VAR_LABEL, SPEED_VAR_LABEL], ubidots.token);
   changeMachineTitle(selectedDeviceObject.name || "");
   determineMachineState(varIdsObj[ON_OFF_VAR_LABEL], ubidots.token);
+  determineCurrSpeed(varIdsObj[SPEED_VAR_LABEL]);
 });
 
 ubidots.on("ready", async () => {
   console.log({ubidots});
   changeMachineTitle(IS_STATIC ? MACHINE_NAME : ubidots.deviceObject?.name);
   const selectedDeviceId = IS_STATIC ? DEVICE_ID : ubidots.selectedDevice;
-  varIdsObj = await getDataVarsIdByDeviceId(selectedDeviceId, [ON_OFF_VAR_LABEL, BOTIN_VAR_LABEL], ubidots.token);
+  varIdsObj = await getDataVarsIdByDeviceId(selectedDeviceId, [ON_OFF_VAR_LABEL, BOTIN_VAR_LABEL, SPEED_VAR_LABEL], ubidots.token);
   runSockets();
   determineMachineState(varIdsObj[ON_OFF_VAR_LABEL], ubidots.token);
+  determineCurrSpeed(varIdsObj[SPEED_VAR_LABEL]);
 });
 /*  */
