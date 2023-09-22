@@ -13,6 +13,7 @@ const SECOND_WARNING = 1200000; // Status changes to red after x milliseconds
 
 /* Vars */
 const ubidots = new Ubidots();
+const chartReg = {};
 let varIdsObj = {};
 let shift = {
   endInMinutes: null,
@@ -286,10 +287,117 @@ const determineMachineState = (onOffVarId, tk) => {
     })
   );
 };
+const maybeDisposeChart = chartdiv => {
+  if (chartReg[chartdiv]) {
+      chartReg[chartdiv].dispose();
+      delete chartReg[chartdiv];
+  }
+}
+const MAX = 150;
+const BACKGROUND_COLOR = '#BFC1C1';
+const BACKGROUND_OPACITY = 1;
+const VALUE_COLOR = '#007EA7';
+const SPEED_TEXT_COLOR = '#007EA7';
+const GAUGE_WIDTH = 35;
+const SPEED_FONT = {
+  size: 2.5,
+  paddingBottom: 20,
+}
+const UNIT_FONT = {
+  size: 0.5,
+  paddingTop: 15,
+  text: 'xxxxxxxx xxxx'
+}
+const MIN_MAX_FONT = {
+  size: 0.9,
+}
+const drawGaugeChart = (data, container) => {
+  // Check if the chart instance exists
+  maybeDisposeChart(container);
+  // Themes begin
+  am4core.useTheme(am4themes_animated);
+  // Themes end
+
+  // create chart
+  var chart = am4core.create(container, am4charts.GaugeChart);
+  //Register chart for dispose
+  chartReg[container] = chart;
+  chart.padding(0, 0, 10, 10);
+  chart.hiddenState.properties.opacity = 0; // this makes initial fade in effect
+  chart.innerRadius = am4core.percent(100 - GAUGE_WIDTH);
+
+  var axis = chart.xAxes.push(new am4charts.ValueAxis());
+  axis.min = 0;
+  axis.max = MAX;
+  axis.strictMinMax = true;
+  axis.renderer.grid.template.disabled = true;
+  axis.renderer.labels.template.disabled = true;
+  axis.renderer.labels.template.radius = 0;
+
+  var colorSet = new am4core.ColorSet();
+
+  var label = chart.radarContainer.createChild(am4core.Label);
+  label.isMeasured = false;
+  label.paddingBottom = SPEED_FONT.paddingBottom;
+  label.fontSize = SPEED_FONT.size + 'rem';
+  label.fontWeight = "bolder";
+  //label.x = am4core.percent(50);
+  label.horizontalCenter = "middle";
+  label.verticalCenter = "middle";
+  label.text = data.value;
+  label.fill = am4core.color(SPEED_TEXT_COLOR);
+  var unitsLabel = chart.radarContainer.createChild(am4core.Label);
+  unitsLabel.isMeasured = false;
+  unitsLabel.paddingTop = UNIT_FONT.paddingTop;
+  unitsLabel.fontSize = UNIT_FONT.size + 'rem';
+  unitsLabel.fontWeight = "bolder";
+  //unitsLabel.x = am4core.percent(50);
+  unitsLabel.horizontalCenter = "middle";
+  unitsLabel.verticalCenter = "middle";
+  unitsLabel.text = UNIT_FONT.text;
+  unitsLabel.fill = am4core.color(SPEED_TEXT_COLOR);
+
+  var range = axis.axisRanges.create();
+  //range.value = 0;
+  range.endValue = MAX;
+  range.axisFill.fillOpacity = BACKGROUND_OPACITY;
+  range.axisFill.fill = am4core.color(BACKGROUND_COLOR);
+  range.axisFill.zIndex = -1;
+
+  var range1 = axis.axisRanges.create();
+  range1.value = 0;
+  range1.endValue = data.value;
+  range1.axisFill.fillOpacity = 1;
+  range1.axisFill.fill = am4core.color(VALUE_COLOR);
+
+
+  // Axis labels
+  var label000 = chart.radarContainer.createChild(am4core.Label);
+  //label000.isMeasured = false;
+  label000.y = 2;
+  label000.fontSize = MIN_MAX_FONT.size + 'rem';
+  label000.horizontalCenter = "middle";
+  label000.verticalCenter = "top";
+  label000.text = "0";
+  label000.adapter.add("x", function (x, target) {
+      return -(axis.renderer.pixelInnerRadius + (axis.renderer.pixelRadius - axis.renderer.pixelInnerRadius) / 2);
+  });
+
+  var label100 = chart.radarContainer.createChild(am4core.Label);
+  //label100.isMeasured = false;
+  label100.y = 2;
+  label100.fontSize = MIN_MAX_FONT.size + 'rem';
+  label100.horizontalCenter = "middle";
+  label100.verticalCenter = "top";
+  label100.text = MAX;
+  label100.adapter.add("x", function (x, target) {
+      return (axis.renderer.pixelInnerRadius + (axis.renderer.pixelRadius - axis.renderer.pixelInnerRadius) / 2);
+  });
+}
 const functionSubscribedVar_Speed = (dot) => {
   const { value } = dot;
   const speed = Number(value) ? Math.round(value) : 0;
-
+  drawGaugeChart({value:speed}, 'chartdiv');
   console.log('speed:',speed);
 }
 const determineCurrSpeed = async (speedVarId, tk) => {
