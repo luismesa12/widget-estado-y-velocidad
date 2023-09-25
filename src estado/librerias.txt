@@ -1,2 +1,0 @@
-https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js
-https://iot.cdnedge.bluemix.net/ind/static/js/libs/socket.io/socket.io.min.js
