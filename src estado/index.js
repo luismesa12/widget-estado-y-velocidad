@@ -1,3 +1,4 @@
+/* Status Options */
 //if static dashboard
 const IS_STATIC = true;
 const MACHINE_NAME = "Maquina 1 D";
@@ -10,6 +11,27 @@ const ON_OFF_VAR_LABEL = "on_off";
 const SPEED_VAR_LABEL = "rate";
 const FIRST_WARNING = 600000; // Status changes to orange after x milliseconds
 const SECOND_WARNING = 1200000; // Status changes to red after x milliseconds
+/*  */
+/* Gauge Options*/
+const MAX = 150;
+const BACKGROUND_COLOR = '#BFC1C1';
+const BACKGROUND_OPACITY = 1;
+const VALUE_COLOR = '#007EA7';
+const SPEED_TEXT_COLOR = '#007EA7';
+const GAUGE_WIDTH = 35;
+const SPEED_FONT = {
+  size: 2.5,
+  paddingBottom: 20,
+}
+const UNIT_FONT = {
+  size: 0.5,
+  paddingTop: 15,
+  text: 'xxxxxxxx xxxx'
+}
+const MIN_MAX_FONT = {
+  size: 0.9,
+}
+/* */
 
 /* Vars */
 const ubidots = new Ubidots();
@@ -292,24 +314,6 @@ const maybeDisposeChart = chartdiv => {
       chartReg[chartdiv].dispose();
       delete chartReg[chartdiv];
   }
-}
-const MAX = 150;
-const BACKGROUND_COLOR = '#BFC1C1';
-const BACKGROUND_OPACITY = 1;
-const VALUE_COLOR = '#007EA7';
-const SPEED_TEXT_COLOR = '#007EA7';
-const GAUGE_WIDTH = 35;
-const SPEED_FONT = {
-  size: 2.5,
-  paddingBottom: 20,
-}
-const UNIT_FONT = {
-  size: 0.5,
-  paddingTop: 15,
-  text: 'xxxxxxxx xxxx'
-}
-const MIN_MAX_FONT = {
-  size: 0.9,
 }
 const drawGaugeChart = (data, container) => {
   // Check if the chart instance exists
