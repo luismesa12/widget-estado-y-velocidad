@@ -154,6 +154,18 @@ async function get_org_id(token) {
 /* Services end*/
 
 /* Functions */
+const toggleLoading = (isLoading) => {
+  if (isLoading) {
+      $('#main-container').attr('hidden', true);
+      $('#loading').attr("hidden", false);
+      return
+  }
+  if (!isLoading) {
+      $('#loading').attr("hidden", true);
+      $('#main-container').attr('hidden', false);
+      return
+  }
+}
 const query = async (varId, to_k) => {
   const res = await fetchLastDotByVarId(varId, to_k);
   functionSubscribedVar(res);
@@ -416,30 +428,43 @@ const determineCurrSpeed = async (speedVarId, tk) => {
 /* Listen */
 let currentDeviceId = null; //fix ubidots event bug
 ubidots.on("selectedDeviceObject", async function (selectedDeviceObject) {
-  if (IS_STATIC || !ubidots.token) return;
-  if (currentDeviceId === selectedDeviceObject.id) return; //fix ubidots event bug
-  currentDeviceId = selectedDeviceObject.id; //fix ubidots event bug
-  $("#status").empty();
-  $("#value").empty();
-  clearIntervalOfValidateTimeDifference();
-  $(".icon-div").css("background-color", "#bfc1c0");
-  shift = { endInMinutes: null, mtto: false };
-  unSubscribeVariable(varIdsObj[ON_OFF_VAR_LABEL]);
-  unSubscribeVariable(varIdsObj[SPEED_VAR_LABEL]);
-
-  varIdsObj = await getDataVarsIdByDeviceId(selectedDeviceObject.id, [ON_OFF_VAR_LABEL, BOTIN_VAR_LABEL, SPEED_VAR_LABEL], ubidots.token);
-  changeMachineTitle(selectedDeviceObject.name || "");
-  determineMachineState(varIdsObj[ON_OFF_VAR_LABEL], ubidots.token);
-  determineCurrSpeed(varIdsObj[SPEED_VAR_LABEL], ubidots.token);
+  toggleLoading(true);
+  try {
+    if (IS_STATIC || !ubidots.token) return;
+    if (currentDeviceId === selectedDeviceObject.id) return; //fix ubidots event bug
+    currentDeviceId = selectedDeviceObject.id; //fix ubidots event bug
+    $("#status").empty();
+    $("#value").empty();
+    clearIntervalOfValidateTimeDifference();
+    $(".icon-div").css("background-color", "#bfc1c0");
+    shift = { endInMinutes: null, mtto: false };
+    unSubscribeVariable(varIdsObj[ON_OFF_VAR_LABEL]);
+    unSubscribeVariable(varIdsObj[SPEED_VAR_LABEL]);
+  
+    varIdsObj = await getDataVarsIdByDeviceId(selectedDeviceObject.id, [ON_OFF_VAR_LABEL, BOTIN_VAR_LABEL, SPEED_VAR_LABEL], ubidots.token);
+    changeMachineTitle(selectedDeviceObject.name || "");
+    determineMachineState(varIdsObj[ON_OFF_VAR_LABEL], ubidots.token);
+    await determineCurrSpeed(varIdsObj[SPEED_VAR_LABEL], ubidots.token);
+  } catch (error) {
+    console.log(error);
+  } finally {
+    toggleLoading(false);
+  }
 });
 
 ubidots.on("ready", async () => {
-  console.log({ubidots});
-  changeMachineTitle(IS_STATIC ? MACHINE_NAME : ubidots.deviceObject?.name);
-  const selectedDeviceId = IS_STATIC ? DEVICE_ID : ubidots.selectedDevice;
-  varIdsObj = await getDataVarsIdByDeviceId(selectedDeviceId, [ON_OFF_VAR_LABEL, BOTIN_VAR_LABEL, SPEED_VAR_LABEL], ubidots.token);
-  runSockets();
-  determineMachineState(varIdsObj[ON_OFF_VAR_LABEL], ubidots.token);
-  determineCurrSpeed(varIdsObj[SPEED_VAR_LABEL], ubidots.token);
+  toggleLoading(true);
+  try {
+    changeMachineTitle(IS_STATIC ? MACHINE_NAME : ubidots.deviceObject?.name);
+    const selectedDeviceId = IS_STATIC ? DEVICE_ID : ubidots.selectedDevice;
+    varIdsObj = await getDataVarsIdByDeviceId(selectedDeviceId, [ON_OFF_VAR_LABEL, BOTIN_VAR_LABEL, SPEED_VAR_LABEL], ubidots.token);
+    runSockets();
+    determineMachineState(varIdsObj[ON_OFF_VAR_LABEL], ubidots.token);
+    await determineCurrSpeed(varIdsObj[SPEED_VAR_LABEL], ubidots.token);
+  } catch (error) {
+    console.log(error);
+  } finally {
+    toggleLoading(false);
+  }
 });
 /*  */
