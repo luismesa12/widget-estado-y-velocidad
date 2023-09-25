@@ -172,17 +172,11 @@ const query = async (varId, to_k) => {
 };
 
 const getDateString = (d) => {
-  const datestring =
-    // ("0" + d.getDate()).slice(-2) +
-    // "/" +
-    // ("0" + (d.getMonth() + 1)).slice(-2) +
-    // "/" +
-    // d.getFullYear() +
-    // " " +
-    ("0" + d.getHours()).slice(-2) +
-    ":" +
-    ("0" + d.getMinutes()).slice(-2);
-  return datestring;
+  const day = ("0" + d.getDate()).slice(-2);
+  const month =  ("0" + (d.getMonth() + 1)).slice(-2);
+  const hours =  ("0" + d.getHours()).slice(-2);
+  const minutes = ("0" + d.getMinutes()).slice(-2);
+  return `${day}/${month} ${hours}:${minutes}`
 };
 const changeMachineTitle = (machineName) => {
   $("#machine-title").text(machineName);
