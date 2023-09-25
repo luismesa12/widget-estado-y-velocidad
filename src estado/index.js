@@ -20,11 +20,11 @@ const VALUE_COLOR = '#007EA7';
 const SPEED_TEXT_COLOR = '#007EA7';
 const GAUGE_WIDTH = 35;
 const SPEED_FONT = {
-  size: 2.5,
-  paddingBottom: 20,
+  size: 2.9,
+  paddingBottom: 25,
 }
-const UNIT_FONT = {
-  size: 0.5,
+const SUBTITLE_FONT = {
+  size: 0.8,
   paddingTop: 15,
   text: 'xxxxxxxx xxxx'
 }
@@ -352,13 +352,13 @@ const drawGaugeChart = (data, container) => {
   label.fill = am4core.color(SPEED_TEXT_COLOR);
   var unitsLabel = chart.radarContainer.createChild(am4core.Label);
   unitsLabel.isMeasured = false;
-  unitsLabel.paddingTop = UNIT_FONT.paddingTop;
-  unitsLabel.fontSize = UNIT_FONT.size + 'rem';
+  unitsLabel.paddingTop = SUBTITLE_FONT.paddingTop;
+  unitsLabel.fontSize = SUBTITLE_FONT.size + 'rem';
   unitsLabel.fontWeight = "bolder";
   //unitsLabel.x = am4core.percent(50);
   unitsLabel.horizontalCenter = "middle";
   unitsLabel.verticalCenter = "middle";
-  unitsLabel.text = UNIT_FONT.text;
+  unitsLabel.text = SUBTITLE_FONT.text;
   unitsLabel.fill = am4core.color(SPEED_TEXT_COLOR);
 
   var range = axis.axisRanges.create();
