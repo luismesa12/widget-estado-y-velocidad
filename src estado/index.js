@@ -1,18 +1,13 @@
 /* Status Options */
+const ON_OFF_VAR_LABEL = "on_off";
 //if static dashboard
 const IS_STATIC = true;
 const MACHINE_NAME = "Maquina 1 D";
 const DEVICE_ID = "600725cf0ff4c3259dcd5c39";
 const DEVICE_LABEL = "3f002b001947393035313138";
 
-
-// Normally it is not necessary to change this
-const ON_OFF_VAR_LABEL = "on_off";
-const SPEED_VAR_LABEL = "rate";
-const FIRST_WARNING = 600000; // Status changes to orange after x milliseconds
-const SECOND_WARNING = 1200000; // Status changes to red after x milliseconds
-/*  */
 /* Gauge Options*/
+const SPEED_VAR_LABEL = "rate";
 const MAX = 150;
 const BACKGROUND_COLOR = '#BFC1C1';
 const BACKGROUND_OPACITY = 1;
@@ -31,7 +26,7 @@ const SUBTITLE_FONT = {
 const MIN_MAX_FONT = {
   size: 0.9,
 }
-/* */
+/* Options end */
 
 /* Vars */
 const ubidots = new Ubidots();
@@ -43,6 +38,8 @@ let shift = {
 };
 let intervalId;
 //ignore
+const FIRST_WARNING = 600000; // Status changes to orange after x milliseconds
+const SECOND_WARNING = 1200000; // Status changes to red after x milliseconds
 const HAS_BOTIN = false;
 const BOTIN_VAR_LABEL = "botin";
 const ADJUST_TEXT = "En Ajustes";
