@@ -21,7 +21,7 @@ const SPEED_FONT = {
 const SUBTITLE_FONT = {
   size: 0.8,
   paddingTop: 15,
-  text: 'xxxxxxxx xxxx'
+  text: 'Velocidad ciclo'
 }
 const MIN_MAX_FONT = {
   size: 0.9,
